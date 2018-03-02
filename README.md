@@ -1,3 +1,3 @@
-# my-blog
+# sino.moe
 
-**just a simple blog**
+[just a simple issue blog](issues)

@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <title>calc</title>
+    <style>
+        * {
+            padding: 0;
+            margin: 0px;
+        }
+        
+        #calculater {
+            margin: auto;
+            border: solid 6px #2371D3;
+            border-spacing: 0px;
+        }
+        
+        #display {
+            width: 100%;
+            height: 30px;
+            border-bottom: solid 4px #2371D3;
+            font-weight: bold;
+            color: #193D83;
+            font-family: 黑体;
+            padding-right: 2px;
+            text-align: right;
+        }
+        
+        .key {
+            cursor: pointer;
+            width: 40px;
+            height: 30px;
+            border: solid 1px #FFFFFF;
+            background: #2371D3;
+            color: #ffffff;
+            text-align: center;
+            font-weight: bold;
+            font-family: 黑体;
+        }
+        
+        #equal {
+            cursor: pointer;
+            width: 40px;
+            height: 100%;
+            background: #2371D3;
+            border: solid 1px #FFFFFF;
+            color: #ffffff;
+            text-align: center;
+            font-weight: bold;
+            font-family: 黑体;
+        }
+        
+        .key:hover {
+            background: #EA6F30;
+        }
+        
+        #equal:hover {
+            background: #EA6F30;
+        }
+    </style>
+</head>
+
+<body>
+    <table id="calculater">
+        <tr>
+            <td id="display" colspan="5">0</td>
+        </tr>
+        <tr>
+            <td class="key num">7</td>
+            <td class="key num">8</td>
+            <td class="key num">9</td>
+            <td class="key op">+</td>
+            <td class="key" id="back">&lt;-</td>
+        </tr>
+        <tr>
+            <td class="key num">4</td>
+            <td class="key num">5</td>
+            <td class="key num">6</td>
+            <td class="key op">-</td>
+            <td class="key" id="clear">AC</td>
+        </tr>
+        <tr>
+            <td class="key num">1</td>
+            <td class="key num">2</td>
+            <td class="key num">3</td>
+            <td class="key op">x</td>
+            <td rowspan="2" id="equal">=</td>
+        </tr>
+        <tr>
+            <td class="key" id="negative">+/-</td>
+            <td class="key num">0</td>
+            <td class="key num">.</td>
+            <td class="key op">/</td>
+        </tr>
+    </table>
+</body>
+
+<script>
+    let cal = require("./calculator").new();
+    window.onload = function() {
+        for (el of document.getElementsByClassName("num"))
+            el.onclick = inputNum;
+        for (el of document.getElementsByClassName("op"))
+            el.onclick = inputOp;
+        document.getElementById("back").onclick = inputBack;
+        document.getElementById("equal").onclick = getResult;
+        document.getElementById("clear").onclick = clear;
+        document.getElementById("negative").onclick = negative;
+    }
+    var _waitingNum = "0";
+    Object.defineProperty(window, "waitingNum", {
+        get: function() {
+            return this._waitingNum;
+        },
+        set: function(v) {
+            this._waitingNum = v;
+            document.getElementById("display").innerHTML = v;
+        }
+    });
+
+    function inputNum() {
+        if (waitingNum == "0" && this.innerHTML != ".") {
+            waitingNum = this.innerHTML;
+        } else {
+            waitingNum += this.innerHTML;
+        }
+    }
+
+    function inputBack() {
+        waitingNum = waitingNum.slice(0, waitingNum.length - 1);
+        if (waitingNum.length == 0) waitingNum = "0";
+    }
+
+    function inputOp() {
+        cal.inputOperand(parseFloat(waitingNum));
+        waitingNum = "0";
+        cal.inputOperator(this.innerHTML);
+    }
+
+    function getResult() {
+        cal.inputOperand(parseFloat(waitingNum));
+        waitingNum = (cal.getResult()).toString();
+
+    }
+
+    function clear() {
+        cal.init();
+        waitingNum = "0";
+    }
+
+    function negative() {
+        if (parseFloat(waitingNum) > 0) {
+            waitingNum = "-" + waitingNum;
+        } else {
+            waitingNum = waitingNum.slice(1, waitingNum.length);
+        }
+    }
+</script>
+
+</html>
